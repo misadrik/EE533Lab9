@@ -6,6 +6,7 @@ FUNC7 RS2   RS1   FUNC3 RD  OP
 Rtype = ['add', 'sub', 'sll', 'xor', 'srl', 'or', 'and']
 load_word = 'lw'
 store_word = 'sw'
+head_tail = ['lwfw','lwlw']
 IMMEDIATE = ['addi', 'slti', 'sltiu', 'xori', 'ori', 'andi']
 Branch = ['beq', 'bne', 'blt', 'bge']
 Jump = 'j'
@@ -53,6 +54,9 @@ def mini_compiler2(assembly):
     if assembly[0] == JALR:
         machine_code = JALR_Decoder(assembly[0], register_map[assembly[1]],
                            register_map[assembly[2]], assembly[3])
+
+    if assembly[0] in head_tail:
+        machinecode = HEAD_TAIL_Decoder(assembly[0],register_map[assembly[1]])
 
     if assembly[0] == 'nop':
         machine_code = '0xB'
@@ -198,11 +202,24 @@ def JALR_Decoder(opcode, rd, rs, offset):
     
     return hex(int(Instruction, 2))
 
+
+def HEAD_TAIL_Decoder(opcode,rd):
+    rd_bin = dec_to_bin(int(rd), 5)
+
+    if opcode == 'lwfw':
+        Instruction = '00000000000'+'00000'+'000'+ rd_bin+ '0101011'
+
+    if opcode == 'lwlw':
+        Instruction = '00000000000'+'00000'+'001' + rd_bin + '0101011'
+
+    return hex(int(Instruction, 2))
+
 def dec_to_bin(dec_num,digit):
     if dec_num<0:
         return format(2**digit+dec_num,'b')
     else:
         return ('{:0'+str(digit)+'b}').format(dec_num,10)
+
 
 
 def print_machinecode():
