@@ -56,7 +56,7 @@ def mini_compiler2(assembly):
                            register_map[assembly[2]], assembly[3])
 
     if assembly[0] in head_tail:
-        machinecode = HEAD_TAIL_Decoder(assembly[0],register_map[assembly[1]])
+        machine_code = HEAD_TAIL_Decoder(assembly[0],register_map[assembly[1]])
 
     if assembly[0] == 'nop':
         machine_code = '0xB'
@@ -233,9 +233,23 @@ def print_machinecode():
 #        print('0xB', file=fout)
 #        print('0xB', file=fout)
 
+    fout.close()
+    fin.close()
+
+def print_coe():
+    fin = open('./machinecode.txt', 'r')
+    fout = open('./machinecode.coe', 'w')
+
+    print('memory_initialization_radix = 16', file=fout)
+    print('memory_initialization_vector = ', file = fout)
+    
+    for instr in fin.readlines():  
+        print(instr.strip().strip('0x'), file = fout)
+
 if __name__ == "__main__":
     #function_grammer()
     print_machinecode()
+    print_coe()
     
     
 
