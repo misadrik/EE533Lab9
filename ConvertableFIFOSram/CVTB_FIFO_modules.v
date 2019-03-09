@@ -22,4 +22,6 @@ always @(posedge clk or negedge rst)
     end
     else if(CE)
       Counter_OUT <= COUT_next;
+
 endmodule
+
