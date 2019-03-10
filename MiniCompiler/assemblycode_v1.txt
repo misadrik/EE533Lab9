@@ -1,0 +1,22 @@
+lwfw s0 
+lwlw s1 
+nop
+nop
+nop
+lw a5 s0 0
+nop
+nop
+nop
+sw a5 s0 0
+beq s0 s1 19
+addi s0 s0 1 
+nop
+nop
+j 6
+nop
+nop
+nop
+j 19
+nop
+nop
+nop
