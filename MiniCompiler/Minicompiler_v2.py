@@ -12,6 +12,7 @@ Branch = ['beq', 'bne', 'blt', 'bge']
 Jump = 'j'
 JAL = 'jal'
 JALR = 'jalr'
+dpd = 'dpd'
 register_map = {'x0': '0', 'ra': '1', 'sp': '2', 'gp': '3', 'tp': '4', 't0': '5', 't1': '6',
                 't2': '7', 's0': '8', 's1': '9', 'a0': '10', 'a1': '11', 'a2': '12',
                 'a3': '13', 'a4': '14', 'a5': '15', 'a6': '16', 'a7': '17', 's2': '18', 's3': '19',
@@ -57,6 +58,9 @@ def mini_compiler2(assembly):
 
     if assembly[0] in head_tail:
         machine_code = HEAD_TAIL_Decoder(assembly[0],register_map[assembly[1]])
+
+    if assembly[0] == dpd:
+        machine_code = DPD_Decoder(assembly[0])
 
     if assembly[0] == 'nop':
         machine_code = '0xB'
@@ -214,6 +218,13 @@ def HEAD_TAIL_Decoder(opcode,rd):
 
     return hex(int(Instruction, 2))
 
+
+def DPD_Decoder(opcode):
+    if opcode == 'dpd':
+        Instruction = '00000000000'+'00000'+'000' + '00000' + '1101011'
+
+    return hex(int(Instruction, 2))
+
 def dec_to_bin(dec_num,digit):
     if dec_num<0:
         return format(2**digit+dec_num,'b')
@@ -240,7 +251,7 @@ def print_coe():
     fin = open('./machinecode.txt', 'r')
     fout = open('./machinecode.coe', 'w')
 
-    print('memory_initialization_radix = 16', file=fout)
+    print('memory_initialization_radix = 16;', file=fout)
     print('memory_initialization_vector = ', file = fout)
     
     for instr in fin.readlines():  
