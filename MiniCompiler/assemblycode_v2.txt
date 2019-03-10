@@ -1,0 +1,19 @@
+nop
+lwfw s0  
+lwlw s1  
+nop
+nop
+nop
+beq s1 s0 14
+addi s0 s0 1
+nop
+nop
+j 6
+nop
+nop
+nop
+dpd
+j 15
+nop
+nop
+nop
