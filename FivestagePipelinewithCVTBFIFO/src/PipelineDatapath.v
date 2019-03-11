@@ -206,7 +206,7 @@ module PipelineDatapath
 	wire beq;
 	wire bne;
 	wire blt;
-	assign equal = !(|MEM_ALUoutput[7:0]);
+	assign equal = !(|MEM_ALUoutput);
 	assign beq = equal & !MEM_Branch[1] & !MEM_Branch[0];
 	assign bne = !equal & !MEM_Branch[1] & MEM_Branch[0];
 	assign blt = MEM_ALUoutput[63] & MEM_Branch[1] & !MEM_Branch[0];
