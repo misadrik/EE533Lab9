@@ -67,7 +67,7 @@ module ID_EXreg(
 			WReg1 <= 0;
 			rs2 <= 0;
 			EX_CTRL <= 0;
-			MEM_CTRL <= 0;
+			MEM_CTRL <= 4'hc;
 			WB_CTRL <= 0;
 			IMM <= 0;
 		end
