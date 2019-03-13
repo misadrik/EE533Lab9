@@ -3,6 +3,23 @@
 FUNC7 RS2   RS1   FUNC3 RD  OP
 
 '''
+import logging
+
+def log_printer(func):
+    logging.basicConfig(filename='compilerlog.log', level=logging.INFO)
+    def wrapper(*args):
+        logging.info(" % s is running" % func.__name__)
+        
+        Instruction = func(*args)
+
+        print(Instruction[0:8], Instruction[8:16], Instruction[16:24], Instruction[24:32])
+        
+        print(hex(int(Instruction,2)))
+
+        return Instruction
+    
+    return wrapper
+
 Rtype = ['add', 'sub', 'sll', 'xor', 'srl', 'or', 'and']
 load_word = 'lw'
 store_word = 'sw'
@@ -65,14 +82,14 @@ def mini_compiler2(assembly):
         machine_code = DPD_Decoder(OPCODE)
 
     if OPCODE == 'nop':
-        machine_code = '0xB'
+        machine_code = '1011'
 
-    print(machine_code[0:8], machine_code[8:16],
-          machine_code[16:24], machine_code[24:32])
+    # print(machine_code[0:8], machine_code[8:16],
+    #       machine_code[16:24], machine_code[24:32])
 
     return (hex(int(machine_code, 2)))
     
-
+@log_printer
 def Rtype_Decoder(opcode,rd,rs,rt):
     rs_bin = dec_to_bin(int(rs), 5)
     rt_bin = dec_to_bin(int(rt), 5)
@@ -103,6 +120,7 @@ def Rtype_Decoder(opcode,rd,rs,rt):
     return Instruction
 
 
+@log_printer
 def LW_Decoder(opcode, rd, rs, offset):
     rd_bin = dec_to_bin(int(rd), 5)
     rs_bin = dec_to_bin(int(rs), 5)
@@ -115,6 +133,8 @@ def LW_Decoder(opcode, rd, rs, offset):
     #   Instruction[16:24], Instruction[24:32])
     return Instruction
 
+
+@log_printer
 def SW_Decoder(opcode, rt, rs, offset):
     rt_bin=dec_to_bin(int(rt), 5)
     rs_bin=dec_to_bin(int(rs), 5)
@@ -126,6 +146,8 @@ def SW_Decoder(opcode, rt, rs, offset):
         #   Instruction[16:24], Instruction[24:32])
     return Instruction
 
+
+@log_printer
 def IMMEDIATE_Decoder(opcode,rd,rs,offset):
     rs_bin = dec_to_bin(int(rs), 5)
     offset_bin = dec_to_bin(int(offset), 12)
@@ -151,9 +173,10 @@ def IMMEDIATE_Decoder(opcode,rd,rs,offset):
 
     # print(Instruction[0:8], Instruction[8:16],
     #       Instruction[16:24], Instruction[24:32])
-    return Intruction
+    return Instruction
 
 
+@log_printer
 def Branch_Decoder(opcode, rs, rt, offset):
     rs_bin = dec_to_bin(int(rs), 5)
     offset_bin = dec_to_bin(int(offset), 12)
@@ -173,8 +196,10 @@ def Branch_Decoder(opcode, rs, rt, offset):
 
     # print(Instruction[0:8], Instruction[8:16],
     #       Instruction[16:24], Instruction[24:32])
-    return Intruction
+    return Instruction
 
+
+@log_printer
 def Jump_Decoder(opcode,offset):
     offset_bin = dec_to_bin(int(offset), 20)
 
@@ -185,8 +210,10 @@ def Jump_Decoder(opcode,offset):
 
     # print(Instruction[0:8], Instruction[8:16],
     #       Instruction[16:24], Instruction[24:32])
-    return Intruction
+    return Instruction
 
+
+@log_printer
 def JAL_Decoder(opcode, rd, offset):
     offset_bin = dec_to_bin(int(offset), 20)
     rd_bin = dec_to_bin(int(rd), 5)
@@ -197,8 +224,10 @@ def JAL_Decoder(opcode, rd, offset):
 
     # print(Instruction[0:8], Instruction[8:16],
     #       Instruction[16:24], Instruction[24:32])
-    return Intruction
+    return Instruction
 
+
+@log_printer
 def JALR_Decoder(opcode, rd, rs, offset):
     rs_bin=dec_to_bin(int(rs), 5)
     offset_bin=dec_to_bin(int(offset), 12)
@@ -209,26 +238,27 @@ def JALR_Decoder(opcode, rd, rs, offset):
     # print(Instruction[0:8], Instruction[8:16],
     #       Instruction[16:24], Instruction[24:32])
     
-    return Intruction
+    return Instruction
 
-
+@log_printer
 def HEAD_TAIL_Decoder(opcode,rd):
     rd_bin = dec_to_bin(int(rd), 5)
 
     if opcode == 'lwfw':
-        Instruction = '00000000000'+'00000'+'000'+ rd_bin+ '0101011'
+        Instruction = '000000000000'+'00000'+'000'+ rd_bin+ '0101011'
 
     if opcode == 'lwlw':
-        Instruction = '00000000000'+'00000'+'001' + rd_bin + '0101011'
+        Instruction = '000000000000'+'00000'+'001' + rd_bin + '0101011'
 
-    return Intruction
+    return Instruction
 
 
+@log_printer
 def DPD_Decoder(opcode):
     if opcode == 'dpd':
         Instruction = '00000000000'+'00000'+'000' + '00000' + '1101011'
 
-    return Intruction
+    return Instruction
 
 def dec_to_bin(dec_num,digit):
     if dec_num<0:
@@ -262,6 +292,10 @@ def print_coe():
     
     fin.close()
     fout.close()
+
+
+
+
 
 if __name__ == "__main__":
     #function_grammer()
