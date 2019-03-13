@@ -22,50 +22,55 @@ register_map = {'x0': '0', 'ra': '1', 'sp': '2', 'gp': '3', 'tp': '4', 't0': '5'
 
 def mini_compiler2(assembly):
 # assembly = input('Operation: ').split()
-    if assembly[0] in Rtype:
-        #print(Rtype_Decoder(assembly[0], register_map[assembly[1]], register_map[assembly[2]], register_map[assembly[3]]))
-        machine_code = Rtype_Decoder(assembly[0], register_map[assembly[1]], register_map[assembly[2]], register_map[assembly[3]])
+    OPCODE = assembly[0]
 
-    if assembly[0] == load_word:
-        # print(LW_Decoder(assembly[0], register_map[assembly[1]], register_map[assembly[2]], assembly[3]))
-        machine_code =  LW_Decoder(assembly[0], register_map[assembly[1]], register_map[assembly[2]], assembly[3])
+    if OPCODE in Rtype:
+        #print(Rtype_Decoder(OPCODE, register_map[assembly[1]], register_map[assembly[2]], register_map[assembly[3]]))
+        machine_code = Rtype_Decoder(OPCODE, register_map[assembly[1]], register_map[assembly[2]], register_map[assembly[3]])
 
-    if assembly[0] == store_word:
+    if OPCODE == load_word:
+        # print(LW_Decoder(OPCODE, register_map[assembly[1]], register_map[assembly[2]], assembly[3]))
+        machine_code =  LW_Decoder(OPCODE, register_map[assembly[1]], register_map[assembly[2]], assembly[3])
+
+    if OPCODE == store_word:
         # print(SW_Decoder(
-        #     assembly[0], register_map[assembly[1]], register_map[assembly[2]], assembly[3]))
-        machine_code = SW_Decoder(assembly[0], register_map[assembly[1]], register_map[assembly[2]], assembly[3])
+        #     OPCODE, register_map[assembly[1]], register_map[assembly[2]], assembly[3]))
+        machine_code = SW_Decoder(OPCODE, register_map[assembly[1]], register_map[assembly[2]], assembly[3])
     
-    if assembly[0] in IMMEDIATE:
-        # print(IMMEDIATE_Decoder(assembly[0], register_map[assembly[1]],
+    if OPCODE in IMMEDIATE:
+        # print(IMMEDIATE_Decoder(OPCODE, register_map[assembly[1]],
         #                  register_map[assembly[2]], assembly[3]))
-        machine_code = IMMEDIATE_Decoder(assembly[0], register_map[assembly[1]], register_map[assembly[2]], assembly[3])
+        machine_code = IMMEDIATE_Decoder(OPCODE, register_map[assembly[1]], register_map[assembly[2]], assembly[3])
     
-    if assembly[0] in Branch:
-        # print(Branch_Decoder(assembly[0], register_map[assembly[1]],
+    if OPCODE in Branch:
+        # print(Branch_Decoder(OPCODE, register_map[assembly[1]],
         #                 register_map[assembly[2]], assembly[3]))
-        machine_code = Branch_Decoder(assembly[0], register_map[assembly[1]],
+        machine_code = Branch_Decoder(OPCODE, register_map[assembly[1]],
                              register_map[assembly[2]], assembly[3])
     
-    if assembly[0] == Jump:
-        machine_code = Jump_Decoder(assembly[0], assembly[1])
+    if OPCODE == Jump:
+        machine_code = Jump_Decoder(OPCODE, assembly[1])
 
-    if assembly[0] == JAL:
-        machine_code = JAL_Decoder(assembly[0], register_map[assembly[1]], assembly[2])
+    if OPCODE == JAL:
+        machine_code = JAL_Decoder(OPCODE, register_map[assembly[1]], assembly[2])
 
-    if assembly[0] == JALR:
-        machine_code = JALR_Decoder(assembly[0], register_map[assembly[1]],
+    if OPCODE == JALR:
+        machine_code = JALR_Decoder(OPCODE, register_map[assembly[1]],
                            register_map[assembly[2]], assembly[3])
 
-    if assembly[0] in head_tail:
-        machine_code = HEAD_TAIL_Decoder(assembly[0],register_map[assembly[1]])
+    if OPCODE in head_tail:
+        machine_code = HEAD_TAIL_Decoder(OPCODE,register_map[assembly[1]])
 
-    if assembly[0] == dpd:
-        machine_code = DPD_Decoder(assembly[0])
+    if OPCODE == dpd:
+        machine_code = DPD_Decoder(OPCODE)
 
-    if assembly[0] == 'nop':
+    if OPCODE == 'nop':
         machine_code = '0xB'
 
-    return machine_code
+    print(machine_code[0:8], machine_code[8:16],
+          machine_code[16:24], machine_code[24:32])
+
+    return (hex(int(machine_code, 2)))
     
 
 def Rtype_Decoder(opcode,rd,rs,rt):
@@ -94,8 +99,8 @@ def Rtype_Decoder(opcode,rd,rs,rt):
     if opcode == 'and':
         Instruction = '0000000' + rt_bin + rs_bin + '111' + rd_bin + '0110011'
 
-    print(Instruction[0:8], Instruction[8:16], Instruction[16:24], Instruction[24:32])
-    return hex(int(Instruction,2))
+    # print(Instruction[0:8], Instruction[8:16], Instruction[16:24], Instruction[24:32])
+    return Instruction
 
 
 def LW_Decoder(opcode, rd, rs, offset):
@@ -106,9 +111,9 @@ def LW_Decoder(opcode, rd, rs, offset):
     Instruction = offset_bin + rs_bin + '010' + rd_bin + '0000011'
 
 
-    print(Instruction[0:8], Instruction[8:16],
-      Instruction[16:24], Instruction[24:32])
-    return hex(int(Instruction,2))
+    # print(Instruction[0:8], Instruction[8:16],
+    #   Instruction[16:24], Instruction[24:32])
+    return Instruction
 
 def SW_Decoder(opcode, rt, rs, offset):
     rt_bin=dec_to_bin(int(rt), 5)
@@ -117,9 +122,9 @@ def SW_Decoder(opcode, rt, rs, offset):
     
     Instruction = offset_bin[0:7] + rt_bin + rs_bin + '010' + offset_bin[7:] + '0100011'
     
-    print(Instruction[0:8], Instruction[8:16],
-          Instruction[16:24], Instruction[24:32])
-    return hex(int(Instruction,2))
+    # print(Instruction[0:8], Instruction[8:16],
+        #   Instruction[16:24], Instruction[24:32])
+    return Instruction
 
 def IMMEDIATE_Decoder(opcode,rd,rs,offset):
     rs_bin = dec_to_bin(int(rs), 5)
@@ -144,9 +149,9 @@ def IMMEDIATE_Decoder(opcode,rd,rs,offset):
     if opcode == 'andi':
         Instruction = offset_bin + rs_bin + '111' + rd_bin + '0010011'
 
-    print(Instruction[0:8], Instruction[8:16],
-          Instruction[16:24], Instruction[24:32])
-    return hex(int(Instruction, 2))
+    # print(Instruction[0:8], Instruction[8:16],
+    #       Instruction[16:24], Instruction[24:32])
+    return Intruction
 
 
 def Branch_Decoder(opcode, rs, rt, offset):
@@ -166,9 +171,9 @@ def Branch_Decoder(opcode, rs, rt, offset):
     if opcode == 'bge':  #convert to blt
         Instruction = offset_bin[0] + offset_bin[2:8] + rs_bin + rt_bin + '100' + offset_bin[8:12] + offset_bin[1] + '1100011'
 
-    print(Instruction[0:8], Instruction[8:16],
-          Instruction[16:24], Instruction[24:32])
-    return hex(int(Instruction, 2))
+    # print(Instruction[0:8], Instruction[8:16],
+    #       Instruction[16:24], Instruction[24:32])
+    return Intruction
 
 def Jump_Decoder(opcode,offset):
     offset_bin = dec_to_bin(int(offset), 20)
@@ -178,9 +183,9 @@ def Jump_Decoder(opcode,offset):
             offset_bin[9] + offset_bin[1:9] + '00000' + '1101111'
 
 
-    print(Instruction[0:8], Instruction[8:16],
-          Instruction[16:24], Instruction[24:32])
-    return hex(int(Instruction, 2))
+    # print(Instruction[0:8], Instruction[8:16],
+    #       Instruction[16:24], Instruction[24:32])
+    return Intruction
 
 def JAL_Decoder(opcode, rd, offset):
     offset_bin = dec_to_bin(int(offset), 20)
@@ -190,9 +195,9 @@ def JAL_Decoder(opcode, rd, offset):
         Instruction = offset_bin[0] + offset_bin[10:] + \
             offset_bin[9] + offset_bin[1:9] + rd_bin + '1101111'
 
-    print(Instruction[0:8], Instruction[8:16],
-          Instruction[16:24], Instruction[24:32])
-    return hex(int(Instruction, 2))
+    # print(Instruction[0:8], Instruction[8:16],
+    #       Instruction[16:24], Instruction[24:32])
+    return Intruction
 
 def JALR_Decoder(opcode, rd, rs, offset):
     rs_bin=dec_to_bin(int(rs), 5)
@@ -201,10 +206,10 @@ def JALR_Decoder(opcode, rd, rs, offset):
 
     Instruction= offset_bin + rs_bin + '000' + rd_bin + '1100111'
     
-    print(Instruction[0:8], Instruction[8:16],
-          Instruction[16:24], Instruction[24:32])
+    # print(Instruction[0:8], Instruction[8:16],
+    #       Instruction[16:24], Instruction[24:32])
     
-    return hex(int(Instruction, 2))
+    return Intruction
 
 
 def HEAD_TAIL_Decoder(opcode,rd):
@@ -216,22 +221,20 @@ def HEAD_TAIL_Decoder(opcode,rd):
     if opcode == 'lwlw':
         Instruction = '00000000000'+'00000'+'001' + rd_bin + '0101011'
 
-    return hex(int(Instruction, 2))
+    return Intruction
 
 
 def DPD_Decoder(opcode):
     if opcode == 'dpd':
         Instruction = '00000000000'+'00000'+'000' + '00000' + '1101011'
 
-    return hex(int(Instruction, 2))
+    return Intruction
 
 def dec_to_bin(dec_num,digit):
     if dec_num<0:
         return format(2**digit+dec_num,'b')
     else:
         return ('{:0'+str(digit)+'b}').format(dec_num,10)
-
-
 
 def print_machinecode():
     fin = open('./assemblycode.txt', 'r')
@@ -256,6 +259,9 @@ def print_coe():
     
     for instr in fin.readlines():  
         print(instr.strip().strip('0x'), file = fout)
+    
+    fin.close()
+    fout.close()
 
 if __name__ == "__main__":
     #function_grammer()
