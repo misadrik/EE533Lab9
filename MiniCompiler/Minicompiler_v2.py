@@ -4,9 +4,12 @@ FUNC7 RS2   RS1   FUNC3 RD  OP
 
 '''
 import logging
+import functools
 
 def log_printer(func):
     logging.basicConfig(filename='compilerlog.log', level=logging.INFO)
+
+    @functools.wraps(func)
     def wrapper(*args):
         logging.info(" % s is running" % func.__name__)
         
